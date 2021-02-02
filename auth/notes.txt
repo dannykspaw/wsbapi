@@ -1,0 +1,14 @@
+To do:
+
+1.) Clean up directorynad remove redundant files
+2.) Change authentication process from new token to refresh (and resolve error)
+3.) Schedule cronjob function for hourly refresh
+4.) Connect to "redditdata" database and begin to populate
+5.) Push repo to github
+6.) Containerize api job and token retrevial service
+
+Done:
+1.) Access reddit api
+2.) Process incoming data and put it into clean format
+3.) create redditdb
+4.) Handle authentication token setup
