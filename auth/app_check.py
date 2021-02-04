@@ -3,12 +3,14 @@ import requests
 import pandas as pd
 from config import creds
 from token_retrevial import get_token
+import datetime as dt
 
 with open('token_data.json') as token_file:
     token_data = json.load(token_file)
 token = 'bearer ' + token_data['access_token']
 
 def check_token():
+    #flag - clean up process, find better way
     base_url = 'https://oauth.reddit.com'
     headers = {'Authorization': token, 'User-Agent': '{} by {}'.format(creds['app_name'], creds['username'])}
     response = requests.get(base_url + '/api/v1/me', headers=headers)
@@ -28,6 +30,7 @@ def get_comments():
     title = []
     upvotes = []
     upvote_ratio = []
+    #flag - clean up process, find better way
     for x in values['data']['children']:
         comment_id.append(x['data']['name'])
         author.append(x['data']['author_fullname'])
@@ -36,6 +39,7 @@ def get_comments():
         title.append(x['data']['title'])
         upvotes.append(x['data']['ups'])
         upvote_ratio.append(x['data']['upvote_ratio'])
+    reddit_df['created_at'] = pd.Series([dt.datetime.now().strftime("%Y-%m-%d %H:%M")] * len(comment_id))
     reddit_df['comment_id'] = comment_id
     reddit_df['author_id'] = author
     reddit_df['time'] = time
@@ -49,11 +53,11 @@ def get_comments():
 
 # Make sure API is chugging along smoothly
 auth_status = check_token()
-if auth_status == 200:
-    print("Connected!")
-else:
-    print("Refreshing token...")
+if auth_status != 200:
     get_token()
-    print(auth_status)
+else:
+    print("Connected!")
+
+
 
 get_comments()
