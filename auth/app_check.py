@@ -20,7 +20,7 @@ def get_comments():
     payload = {'limit': 100, 'sort': 'top', 't':'hour'}
     api_url = 'https://oauth.reddit.com/'
     headers = {'Authorization': token, 'User-Agent': '{} by {}'.format(creds['app_name'], creds['username'])}
-    response = requests.get(api_url + '/r/wallstreetbets/top', headers=headers, params=payload)
+    response = requests.get(api_url + 'r/CryptoCurrency/top', headers=headers, params=payload)
     values = response.json()
     reddit_df = pd.DataFrame()
     comment_id = []
@@ -35,7 +35,8 @@ def get_comments():
         comment_id.append(x['data']['name'])
         author.append(x['data']['author_fullname'])
         time.append(x['data']['created'])
-        text.append(x['data']['selftext'])
+        text = x['data']['selftext']
+        text.append(text)
         title.append(x['data']['title'])
         upvotes.append(x['data']['ups'])
         upvote_ratio.append(x['data']['upvote_ratio'])
@@ -47,17 +48,15 @@ def get_comments():
     reddit_df['text'] = text
     reddit_df['upvotes'] = upvotes
     reddit_df['upvote_ratio'] = upvote_ratio
-    print(reddit_df.head(5))
+    print(reddit_df[['title', 'upvotes', 'upvote_ratio']].head(100))
     with open('top_subreddit_data.json','w') as reddit_file:
         json.dump(values ,reddit_file)
 
 # Make sure API is chugging along smoothly
 auth_status = check_token()
-if auth_status != 200:
+while auth_status != 200:
     get_token()
 else:
     print("Connected!")
-
-
 
 get_comments()
